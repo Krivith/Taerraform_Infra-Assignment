@@ -1,9 +1,5 @@
-name: infra-pipeline
-
 trigger: none
-
 pool: Self hosted
-
 variables:
   work_path: $(System.DefaultWorkingDirectory)/Environment/Dev
 
