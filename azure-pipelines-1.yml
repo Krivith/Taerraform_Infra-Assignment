@@ -92,7 +92,7 @@ stages:
             provider: 'azurerm'
             command: 'init'
             workingDirectory: '$(work_path)'
-            backendServiceArm: 'SP-connectiont'
+            backendServiceArm: 'SP-connection'
             backendAzureRmStorageAccountName: 'kamalstg12345'
             backendAzureRmContainerName: 'kamalcontainer'
             backendAzureRmKey: 'Dev.tfstate'
