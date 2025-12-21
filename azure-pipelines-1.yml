@@ -1,0 +1,106 @@
+name: infra-pipeline
+
+trigger: none
+
+pool: Self hosted
+
+variables:
+  work_path: $(System.DefaultWorkingDirectory)/Environment/Dev
+
+stages:
+  - stage: initValidatePlan
+    displayName: Init, Validate and Plan
+    jobs:
+      - job: initValidatePlanJob
+        displayName: Init Validate Plan Job
+        steps:
+        - task: TerraformTask@5
+          displayName: Terraform Init
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(work_path)'
+            backendServiceArm: 'SP-connection'
+            backendAzureRmStorageAccountName: 'kamalstg12345'
+            backendAzureRmContainerName: 'kamalcontainer'
+            backendAzureRmKey: 'Dev.tfstate'
+
+        - task: TerraformTask@5
+          displayName: Terraform Validate
+          inputs:
+            provider: 'azurerm'
+            command: 'validate'
+            workingDirectory: '$(work_path)'
+
+        - task: TerraformTask@5
+          displayName: Terraform Plan
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            workingDirectory: '$(work_path)'
+            environmentServiceNameAzureRM: 'SP-connection'
+
+  - stage: securityScan
+    displayName: Security Scan
+    jobs:
+      - job: tfsec
+        displayName: tfsec
+        steps:
+        - task: tfsec@1
+          displayName: tfsec
+          inputs:
+            version: 'v1.26.0'
+            publishTestResults: false
+            dir: '$(work_path)'
+      
+      - job: tflint
+        displayName: tflint
+        steps:
+        - task: CmdLine@2
+          continueOnError: true
+          displayName: tflint
+          inputs:
+            script: 'tflint --recursive /f junit > tflint-out.xml'
+            workingDirectory: '$(work_path)'
+
+        - task: PublishTestResults@2
+          displayName: tflint result publish
+          inputs:
+            testResultsFormat: 'JUnit'
+            testResultsFiles: 'tflint-out.xml'
+            testRunTitle: 'tflint'
+
+  - stage: approvalAndApply
+    displayName: Approval and Apply
+    jobs:
+      - job: approval
+        pool: server
+        displayName: approval
+        steps:
+        - task: ManualValidation@1
+          displayName: Approval
+          inputs:
+            notifyUsers: 'er.kamal801@gmail.com'
+            approvers: 'er.kamal801@gmail.com'
+        
+      - job: apply
+        dependsOn: approval
+        displayName: Terraform Apply
+        steps:
+        - task: TerraformTask@5
+          displayName: Terraform Init
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(work_path)'
+            backendServiceArm: 'SP-connectiont'
+            backendAzureRmStorageAccountName: 'kamalstg12345'
+            backendAzureRmContainerName: 'kamalcontainer'
+            backendAzureRmKey: 'Dev.tfstate'
+        - task: TerraformTask@5
+          displayName: Terraform Apply
+          inputs:
+            provider: 'azurerm'
+            command: 'apply'
+            workingDirectory: '$(work_path)'
+            environmentServiceNameAzureRM: 'SP-connection'
