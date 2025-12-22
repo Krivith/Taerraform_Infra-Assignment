@@ -11,7 +11,7 @@ stages:
         inputs:
           provider: 'azurerm'
           command: 'init'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Dev'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/Infra_terraform_/Environment/Dev'
           backendServiceArm: 'SP-connection'
           backendAzureRmStorageAccountName: 'kamalstg12345'
           backendAzureRmContainerName: 'kamalcontainer'
@@ -21,7 +21,7 @@ stages:
         inputs:
           provider: 'azurerm'
           command: 'validate'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Dev'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/Infra_terraform_/Environment/Dev'
     
   
 
