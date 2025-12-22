@@ -1,6 +1,7 @@
 trigger: none 
 pool: Self hosted
 
+
 stages:
 - stage: TerraformInstall
   displayName: Terraform Install
