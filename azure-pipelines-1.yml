@@ -54,7 +54,7 @@ stages:
 
        - task: PublishPipelineArtifact@1
          inputs:
-           targetPath: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev/'
+           targetPath: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev/Dev/terraform-plan-output.txt'
            artifact: 'Terraform_Plan_Output'
            publishLocation: 'pipeline'
        
