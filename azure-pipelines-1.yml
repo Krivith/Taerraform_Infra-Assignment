@@ -54,14 +54,26 @@ stages:
 
        - task: PublishPipelineArtifact@1
          inputs:
-           targetPath: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev/Dev/terraform-plan-output.txt'
+           targetPath: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev/terraform-plan-output.txt'
            artifact: 'Terraform_Plan_Output'
            publishLocation: 'pipeline'
        
 - stage: Linting_Scanning
   displayName: Linting And Scanning
   jobs:
-     - job: Linting_Scanning_Job
+     - job: Tfsec_job
+       displayName: tfsec
        steps:
-       
+       - task: tfsec@1
+         inputs:
+           version: 'v1.26.0'
+           dir: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev'
 
+       - task: PublishTestResults@2
+         inputs:
+           testResultsFormat: 'JUnit'
+           testResultsFiles: '**/TEST-*.xml'
+           searchFolder: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev'
+           failTaskOnFailureToPublishResults: true
+
+   
