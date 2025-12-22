@@ -58,6 +58,10 @@ stages:
            artifact: 'Terraform_Plan_Output'
            publishLocation: 'pipeline'
        
-
-  
+- stage: Linting_Scanning
+  displayName: Linting And Scanning
+  jobs:
+     - job: Linting_Scanning_Job
+       steps:
+       
 
