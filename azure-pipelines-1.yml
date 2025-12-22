@@ -2,37 +2,61 @@ trigger: none
 pool: Self hosted
 
 stages:
-- stage: Terraform_install_init_Validate
-  displayName: Terraform init And validate
+- stage: TerraformInstall
+  displayName: Terraform Install
+  jobs: 
+  - job: TerraformInstallJob
+    displayName: Terraform Install Job
+    steps:
+    - task: TerraformInstaller@1
+      inputs:
+        terraformVersion: 'latest'
+
+
+- stage: Terraform_init_validate
+  displayName: Terraform init_validate
+  
   jobs:
-    - job: Terraforminitandvalidate
+    - job: Terraform_init_validate_job
       steps:
-      - task: TerraformInstaller@1
-        inputs:
-          terraformVersion: 'latest'
       - task: TerraformTask@5
         inputs:
           provider: 'azurerm'
           command: 'init'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/Infra_terraform_/Environment/Dev'
+          workingDirectory: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev'
           backendServiceArm: 'SP-connection'
           backendAzureRmStorageAccountName: 'kamalstg12345'
           backendAzureRmContainerName: 'kamalcontainer'
           backendAzureRmKey: 'Dev.tfstate'
-
+             
       - task: TerraformTask@5
         inputs:
           provider: 'azurerm'
           command: 'validate'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/Infra_terraform_/Environment/Dev'
-    
-  
+          workingDirectory: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev'
 
+- stage: Terraform_Plan_Output
+  displayName: Terraform Plan
+  jobs:
+     - job: TerraformPlanJob
+       steps:
+       - task: TerraformTask@5
+         inputs:
+           provider: 'azurerm'
+           command: 'plan'
+           workingDirectory: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev'
+           environmentServiceNameAzureRM: 'SP-connection'
+           commandOptions: '-out=tfplan'
 
+       - script: 'terraform show -no-color tfplan > terraform-plan-output.txt'
+         displayName: To Text Document
 
-
-
-
+       - task: PublishPipelineArtifact@1
+         inputs:
+           targetPath: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev/'
+           artifact: 'Terraform_Plan_Output'
+           publishLocation: 'pipeline'
+       
 
   
 
