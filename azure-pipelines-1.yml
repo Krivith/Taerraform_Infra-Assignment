@@ -69,11 +69,7 @@ stages:
            version: 'v1.26.0'
            dir: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev'
 
-       - task: PublishTestResults@2
-         inputs:
-           testResultsFormat: 'JUnit'
-           testResultsFiles: '**/TEST-*.xml'
-           searchFolder: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev'
-           failTaskOnFailureToPublishResults: true
+
+        
 
    
