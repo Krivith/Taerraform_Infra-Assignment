@@ -1,8 +1,8 @@
 trigger: none 
-pool:
+pool: Self hosted
 
 stages:
-- stage: Terraform init And Validate
+- stage: Terraform_init_Validate
   displayName: Terraform init And validate
   jobs:
     - job: Terraforminitandvalidate
