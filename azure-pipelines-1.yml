@@ -36,7 +36,7 @@ stages:
           command: 'validate'
           workingDirectory: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev'
 
-- stage: Terraform_Plan_Output
+- stage: Terraform_Plan
   displayName: Terraform Plan
   jobs:
      - job: TerraformPlanJob
@@ -68,6 +68,53 @@ stages:
          inputs:
            version: 'v1.26.0'
            dir: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev'
+
+
+- stage: Manual_Validation
+  displayName: Manual Validation
+  pool: Server
+  dependsOn: Terraform_Plan
+  condition: succeeded() 
+  jobs:
+   - job: Manual_Validation_Job
+     displayName: Manual_Validation_Job
+     steps:
+     - task: ManualValidation@1
+       inputs:
+         notifyUsers: 'er.kamal801@gmail.com'
+         approvers: 'er.kamal801@gmail.com'
+         instructions: 'Approve Or Reject'
+ 
+        
+- stage: Terraform_Apply
+  displayName: Terraform Apply
+  dependsOn: Manual_Validation
+  condition: succeeded() 
+  jobs:
+   - job: Terraforminit
+     displayName: Terraforminit
+     steps:
+     - task: TerraformTask@5
+       inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev'
+        backendServiceArm: 'SP-connection'
+        backendAzureRmStorageAccountName: 'kamalstg12345'
+        backendAzureRmContainerName: 'kamalcontainer'
+        backendAzureRmKey: 'Dev.tfstate'
+
+   - job: TerraformApply
+     displayName: TerraformApply
+     steps:
+      - task: TerraformTask@5
+        inputs:
+          provider: 'azurerm'
+          command: 'apply'
+          workingDirectory: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev'
+          commandOptions: '-auto-approve'
+          environmentServiceNameAzureRM: 'SP-connection'
+  
 
 
         
