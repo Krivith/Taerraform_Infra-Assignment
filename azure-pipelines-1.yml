@@ -13,6 +13,9 @@ stages:
       inputs:
         terraformVersion: '1.11.4'
 
+    
+    - script: terraform --version
+      displayName: Check Terraform Version
 
 - stage: Terraform_init_validate
   displayName: Terraform init_validate
