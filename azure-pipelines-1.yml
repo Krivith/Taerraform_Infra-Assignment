@@ -42,7 +42,7 @@ stages:
          inputs:
            provider: 'azurerm'
            command: 'plan'
-           workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Dev'
+           workingDirectory: '$(TF_DIR)'
            environmentServiceNameAzureRM: 'SP-connection'
            commandOptions: '-out=tfplan'
 
@@ -64,7 +64,7 @@ stages:
        - task: tfsec@1
          inputs:
            version: 'v1.26.0'
-           dir: '$(System.DefaultWorkingDirectory)/Environment/Dev'
+           dir: '$(TF_DIR)'
 
 
 - stage: Manual_Validation
@@ -95,7 +95,7 @@ stages:
        inputs:
         provider: 'azurerm'
         command: 'init'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Dev'
+        workingDirectory: '$(TF_DIR)'
         backendServiceArm: 'SP-connection'
         backendAzureRmStorageAccountName: 'kamalstg12345'
         backendAzureRmContainerName: 'kamalcontainer'
@@ -108,7 +108,7 @@ stages:
         inputs:
           provider: 'azurerm'
           command: 'apply'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Dev'
+          workingDirectory: '$(TF_DIR)'
           commandOptions: '-auto-approve'
           environmentServiceNameAzureRM: 'SP-connection'
   
