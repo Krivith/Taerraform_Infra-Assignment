@@ -24,7 +24,7 @@ stages:
         inputs:
           provider: 'azurerm'
           command: 'init'
-          workingDirectory: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Dev'
           backendServiceArm: 'SP-connection'
           backendAzureRmStorageAccountName: 'kamalstg12345'
           backendAzureRmContainerName: 'kamalcontainer'
@@ -34,7 +34,7 @@ stages:
         inputs:
           provider: 'azurerm'
           command: 'validate'
-          workingDirectory: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Dev'
 
 - stage: Terraform_Plan
   displayName: Terraform Plan
@@ -45,7 +45,7 @@ stages:
          inputs:
            provider: 'azurerm'
            command: 'plan'
-           workingDirectory: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev'
+           workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Dev'
            environmentServiceNameAzureRM: 'SP-connection'
            commandOptions: '-out=tfplan'
 
@@ -54,7 +54,7 @@ stages:
 
        - task: PublishPipelineArtifact@1
          inputs:
-           targetPath: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev/terraform-plan-output.txt'
+           targetPath: '$(System.DefaultWorkingDirectory)/Environment/Dev/terraform-plan-output.txt'
            artifact: 'Terraform_Plan_Output'
            publishLocation: 'pipeline'
        
@@ -67,7 +67,7 @@ stages:
        - task: tfsec@1
          inputs:
            version: 'v1.26.0'
-           dir: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev'
+           dir: '$(System.DefaultWorkingDirectory)/Environment/Dev'
 
 
 - stage: Manual_Validation
@@ -98,7 +98,7 @@ stages:
        inputs:
         provider: 'azurerm'
         command: 'init'
-        workingDirectory: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Dev'
         backendServiceArm: 'SP-connection'
         backendAzureRmStorageAccountName: 'kamalstg12345'
         backendAzureRmContainerName: 'kamalcontainer'
@@ -111,7 +111,7 @@ stages:
         inputs:
           provider: 'azurerm'
           command: 'apply'
-          workingDirectory: '$(System.DefaultWorkingDirectory)Infra_terraform_/Environment/Dev'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Dev'
           commandOptions: '-auto-approve'
           environmentServiceNameAzureRM: 'SP-connection'
   
